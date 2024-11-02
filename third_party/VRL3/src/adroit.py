@@ -265,8 +265,8 @@ class AdroitEnv:
                 device=device
                 )
         elif env_feature_type == 'pixels':
-            height = 84
-            width = 84
+            height = 224  # 3dp: 84
+            width = 224  # 3dp: 84
             latent_dim = height*width*len(cam_list)*num_frames
             # RRL class instance is environment wrapper...
             env = BasicAdroitEnv(env, cameras=cam_list,
