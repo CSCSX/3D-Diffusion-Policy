@@ -25,6 +25,7 @@
         <camera name="fixed" pos="0 -0.7 0.7" quat="0.92388 0.382683 0 0" />
         <!-- Cameras for the VIL paper -->
         <camera name="vil_camera" pos="0 -0.8 0.8" quat="0.92388 0.382683 0 0" />
+        <camera name="vil_camera_official" pos="0 -1.2 1.2" quat="0.92388 0.382683 0 0" />
         <camera name="left" pos="0.4 -0.2 0.2" euler="0 1.57 1.57" />
         <camera name="view_1" pos="-0.8 -0.8 0.8" euler="0.785 -0.785 -0.785" />
         <camera name="view_2" pos="0 0.5 0.2" euler="-1.57 0 3.14" />

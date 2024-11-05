@@ -18,6 +18,7 @@ import zarr
 from copy import deepcopy
 import numpy as np
 import imageio
+import pickle
 
 from diffusion_policy_3d.gym_util.mjpc_wrapper import MujocoPointcloudWrapperAdroit
 
@@ -152,6 +153,7 @@ def main():
     action_arrays = []
     episode_ends_arrays = []
     
+    init_states = []
 
     # loop over episodes
     minimal_episode_length = 100
@@ -161,6 +163,8 @@ def main():
         time_step = env.reset()
         input_obs_visual = time_step.observation # (3n,84,84), unit8
         input_obs_sensor = time_step.observation_sensor # float32, door(24,)q        
+
+        init_state = env.env._env._env.get_env_state()
 
         total_reward = 0.
         n_goal_achieved_total = 0.
@@ -192,11 +196,13 @@ def main():
                 if args.not_use_multi_view:
                     input_obs_visual = input_obs_visual[:3] # (3,84,84)
                 
+                # save officail vil_camera view
+                image = env.env._env._env.env.sim.render(width=224, height=224, mode='offscreen', camera_name='vil_camera_official', device_id=0)
+                image = image.transpose(2, 0, 1) # (3,224,224)
 
-                        
                 # save data
                 total_count_sub += 1
-                img_arrays_sub.append(input_obs_visual)
+                img_arrays_sub.append(image)
                 state_arrays_sub.append(input_obs_sensor)
                 action_arrays_sub.append(action)
                 point_cloud_arrays_sub.append(time_step.observation_pointcloud)
@@ -212,9 +218,10 @@ def main():
         if n_goal_achieved_total < 10.:
             cprint(f"Episode {episode_idx} has {n_goal_achieved_total} goals achieved and {total_reward} reward. Discarding.", 'red')
         else:
+            init_states.append(init_state)
+            
             # ! Flip vertically: csx did this
             img_arrays_sub = [np.flip(image_array, axis=1) for image_array in img_arrays_sub]
-
             img_arrays_sub_np = np.stack(img_arrays_sub, axis=0).transpose(0,2,3,1)
             save_video_imageio(img_arrays_sub_np, os.path.join(video_dir, f'episode_{episode_idx}.mp4'), fps=30.0)
             save_rgb_image(img_arrays_sub_np[0], os.path.join(image_dir, f'episode_{episode_idx}_0.png'))
@@ -235,6 +242,7 @@ def main():
     ###############################
     # save data
     ###############################
+    pickle.dump(init_states, open(os.path.join(args.root_dir, f'{args.env_name}_{args.camera_name}_init_states.pkl'), 'wb'))
     # create zarr file
     zarr_root = zarr.group(save_dir)
     zarr_data = zarr_root.create_group('data')
