@@ -241,7 +241,8 @@ class ConditionalUnet1D(nn.Module):
                     dim_in, dim_in, cond_dim=cond_dim,
                     kernel_size=kernel_size, n_groups=n_groups,
                     condition_type=condition_type),
-                Upsample1d(dim_in) if not is_last else nn.Identity()
+                # Upsample1d(dim_in) if not is_last else nn.Identity()
+              nn.Identity()
             ]))
         
         final_conv = nn.Sequential(
