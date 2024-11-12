@@ -17,8 +17,8 @@ CUDA_VISIBLE_DEVICES=0 python gen_demonstration_expert.py --env_name $task \
 
 python gen_demonstration_expert.py --env_name pen \
     --num_episodes 120 \
-    --root_dir "../../../3D-Diffusion-Policy/data/" \
-    --expert_ckpt_path "../ckpts/vrl3_pen.pt" \
+    --root_dir "/data/Data/DP3_RAW" \
+    --expert_ckpt_path "/home/cscsx/Codes/EAI-RL-CSX/experts/vrl3_ckpts/vrl3_pen.pt" \
     --not_use_multi_view \
     --camera_name vil_camera \
     --use_point_crop
